@@ -18,16 +18,10 @@ This project aims to detect brain tumors using MRI images. The dataset used is t
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/brain-tumor-detection.git
+    git clone https://github.com/ssenichhh/Brain-Tumor-Detection-using-MRI-Images
     cd brain-tumor-detection
     ```
-
-2. Install the required packages:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Ensure you have Kaggle API credentials (`kaggle.json`) to download the dataset from Kaggle. 
+2. Ensure you have Kaggle API credentials (`kaggle.json`) to download the dataset from Kaggle. 
 
 ## Dataset
 
