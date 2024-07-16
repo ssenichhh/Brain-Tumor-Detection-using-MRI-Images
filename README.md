@@ -158,4 +158,6 @@ def plot_samples(X, y, labels_dict, n=50):
 
 - This project uses the "Brain MRI Images for Brain Tumor Detection" dataset from Kaggle.
 - The VGG16 model is provided by Keras.
-
+## Requirements
+- To access the kaggle.json file and the VGG16 weights stored in Google Drive, follow this link:
+- https://drive.google.com/drive/folders/1xCkJOzZWLrJbd9MhkdFzrBxB-mYWO68V?usp=sharing
