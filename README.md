@@ -1,156 +1,69 @@
 # Brain Tumor Detection using MRI Images
 
-This project aims to detect brain tumors using MRI images. The dataset used is the "Brain MRI Images for Brain Tumor Detection" from Kaggle. The model employed for this task is a fine-tuned VGG16, a popular deep learning model known for its performance in image classification tasks.
+This project demonstrates how I used programming skills to detect brain tumors using MRI images. The dataset for this project comes from Kaggle, and I utilized a well-known deep learning model called VGG16 to achieve this.
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Overview](#overview)
+- [How to Use](#how-to-use)
 - [Dataset](#dataset)
-- [Preprocessing](#preprocessing)
-- [Model](#model)
-- [Training](#training)
-- [Evaluation](#evaluation)
-- [Visualization](#visualization)
-- [Usage](#usage)
+- [Steps I Took](#steps-i-took)
+- [Results](#results)
 - [Acknowledgments](#acknowledgments)
+- [Requirements](#requirements)
 
-## Installation
+## Overview
 
-1. Clone the repository:
+In this project, I aimed to detect brain tumors using MRI images. I used a dataset from Kaggle and employed a pre-trained model called VGG16, which is great for image classification tasks. This project showcases my ability to work with data, preprocess it, train a model, and evaluate its performance.
+
+## How to Use
+
+1. **Clone the repository:**
     ```bash
     git clone https://github.com/ssenichhh/Brain-Tumor-Detection-using-MRI-Images
     ```
-2. Ensure you have Kaggle API credentials (`kaggle.json`) to download the dataset from Kaggle. 
+2. **Download the dataset from Kaggle.**
+3. **Run the Jupyter Notebook** to see how the model is trained and evaluated.
 
 ## Dataset
 
-The dataset can be downloaded from Kaggle:
-- Dataset: [Brain MRI Images for Brain Tumor Detection](https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection)
+The dataset I used is available on Kaggle:
+- [Brain MRI Images for Brain Tumor Detection](https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection)
 
-### Structure
+The dataset is organized into two categories: images with tumors (`YES`) and images without tumors (`NO`).
 
-The dataset is organized into three categories: Training, Testing, and Validation. Each category contains two subdirectories: `YES` for images with tumors and `NO` for images without tumors.
+## Steps I Took
 
-## Preprocessing
+### Preprocessing
 
-### Steps
+1. **Resizing**: All images were resized to 224x224 pixels.
+2. **Cropping**: I focused on regions of interest in the images.
+3. **Data Augmentation**: I used techniques like rotation, shifting, and flipping to increase the diversity of the training data.
 
-1. **Resizing**: All images are resized to 224x224 pixels to match the input size expected by VGG16.
-2. **Cropping**: Images are cropped to focus on regions of interest by detecting contours.
-3. **Data Augmentation**: Techniques such as rotation, width/height shift, shear, brightness adjustment, and flipping are applied to increase the diversity of the training data.
+### Model
 
-### Code
-```python
-def load_data(dir_path, img_size=(224,224)):
-    # Load and resize images
-    pass
+I used the VGG16 model, which is already trained on a large dataset. I fine-tuned it to classify MRI images as either having a brain tumor or not.
 
-def crop_imgs(set_name, add_pixels_value=0):
-    # Crop images based on detected contours
-    pass
+### Training
 
-def preprocess_imgs(set_name, img_size):
-    # Resize and preprocess images for VGG16
-    pass
-```
+I trained the model using augmented data and used early stopping to avoid overfitting. This means the training stopped automatically when the model performance stopped improving.
 
-## Model
+### Evaluation
 
-### VGG16
+I evaluated the model using accuracy and a confusion matrix, which helps to see how well the model distinguishes between images with and without tumors.
 
-VGG16 is a convolutional neural network model that is pre-trained on the ImageNet dataset. In this project, the base VGG16 model is fine-tuned to classify MRI images as either containing a brain tumor or not.
+## Results
 
-### Architecture
-
-- **Base Model**: VGG16 without the top classification layer.
-- **Custom Top Layers**: Added layers include Flatten, Dropout, and Dense layer with sigmoid activation for binary classification.
-
-### Code
-```python
-from keras.applications.vgg16 import VGG16, preprocess_input
-from keras import layers, models
-
-vgg16_weight_path = 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
-base_model = VGG16(weights=vgg16_weight_path, include_top=False, input_shape=(224, 224, 3))
-
-model = models.Sequential()
-model.add(base_model)
-model.add(layers.Flatten())
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(1, activation='sigmoid'))
-
-model.layers[0].trainable = False  # Freeze the base model layers
-model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-```
-
-## Training
-
-### Data Generators
-
-Data generators are created using `ImageDataGenerator` to handle data augmentation and preprocessing.
-
-### Early Stopping
-
-Early stopping is used to prevent overfitting by monitoring the validation accuracy and stopping training when it stops improving.
-
-### Code
-```python
-from keras.preprocessing.image import ImageDataGenerator
-
-train_datagen = ImageDataGenerator(rotation_range=15, width_shift_range=0.1, height_shift_range=0.1, shear_range=0.1, brightness_range=[0.5, 1.5], horizontal_flip=True, vertical_flip=True, preprocessing_function=preprocess_input)
-val_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
-
-train_generator = train_datagen.flow_from_directory('TRAIN_CROP/', target_size=(224, 224), batch_size=32, class_mode='binary')
-val_generator = val_datagen.flow_from_directory('VAL_CROP/', target_size=(224, 224), batch_size=16, class_mode='binary')
-
-history = model.fit(train_generator, epochs=30, validation_data=val_generator, callbacks=[EarlyStopping(monitor='val_accuracy', patience=6, mode='max')])
-```
-
-## Evaluation
-
-### Accuracy and Loss
-
-The model's performance is evaluated using accuracy and loss metrics on the validation set.
-
-### Confusion Matrix
-
-A confusion matrix is plotted to visualize the performance of the model.
-
-### Code
-```python
-from sklearn.metrics import accuracy_score, confusion_matrix
-
-predictions = (model.predict(val_generator) > 0.5).astype("int32")
-accuracy = accuracy_score(val_generator.classes, predictions)
-confusion_mtx = confusion_matrix(val_generator.classes, predictions)
-```
-
-## Visualization
-
-### Sample Images
-
-Sample images from the dataset are plotted to visualize the data.
-
-### Augmented Images
-
-Augmented images are displayed to show the effects of data augmentation.
-
-### Code
-```python
-def plot_samples(X, y, labels_dict, n=50):
-    # Plot sample images
-    pass
-```
-
-## Usage
-
-1. **Run the Jupyter Notebook**: Execute the notebook to train the model and evaluate its performance.
-2. **Inference**: Use the trained model to make predictions on new MRI images by loading the model and running the inference.
+The model was able to detect brain tumors in MRI images with good accuracy. I visualized some sample images from the dataset, as well as some augmented images, to show the variety of data used for training.
 
 ## Acknowledgments
 
-- This project uses the "Brain MRI Images for Brain Tumor Detection" dataset from Kaggle.
-- The VGG16 model is provided by Keras.
+- The dataset is provided by Kaggle.
+- The VGG16 model is available through Keras.
+
 ## Requirements
-- To access the kaggle.json file and the VGG16 weights stored in Google Drive, follow this link:
-- https://drive.google.com/drive/folders/1xCkJOzZWLrJbd9MhkdFzrBxB-mYWO68V?usp=sharing
+
+To access the VGG16 weights stored in Google Drive, follow this link:
+- [VGG16 Weights](https://drive.google.com/drive/folders/1xCkJOzZWLrJbd9MhkdFzrBxB-mYWO68V?usp=sharing)
+
+Thank you for checking out my project! If you have any questions or feedback, feel free to reach out.
